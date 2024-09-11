@@ -1,0 +1,31 @@
+services:
+  django:
+    build:
+      context: ./myproject   # Django 项目路径
+      dockerfile: Dockerfile  # Dockerfile 文件名（默认）
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./myproject:/app
+    depends_on:
+      - postgres
+
+  nextjs:
+    build:
+      context: ./my-dashboard
+      dockerfile: Dockerfile  # Next.js 项目的 Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./my-dashboard:/app
+    depends_on:
+      - django
+
+  postgres:
+    image: postgres:13           # Use Postgres version 13
+    environment:
+      POSTGRES_USER: myuser       # Username for Postgres
+      POSTGRES_PASSWORD: mypassword # Password for Postgres
+      POSTGRES_DB: mydb           # Database name
+    volumes:
+      - ./dbdata:/var/lib/postgresql/data  # Persist Postgres data locally
